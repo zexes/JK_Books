@@ -68,9 +68,12 @@ public class BookListActivity extends AppCompatActivity {
                 resultString.append(resultString)
                         .append(book.title)
                         .append("\n")
+//                        .append((book.authors))
+//                        .append("\n")
                         .append(book.publishedDate)
                         .append("\n\n");
             }
+            Log.d("book size", "onPostExecute: " + books.size());
             tvResult.setText(resultString);
         }
 
