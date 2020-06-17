@@ -1,6 +1,8 @@
 package com.zikozee.books;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -15,12 +17,17 @@ import java.util.ArrayList;
 
 public class BookListActivity extends AppCompatActivity {
     private ProgressBar mLoadingProgress;
+    private RecyclerView rvBooks;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
         mLoadingProgress = findViewById(R.id.pb_loading);
+        rvBooks = (RecyclerView) findViewById(R.id.rv_books);
+        LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
+        rvBooks.setLayoutManager(booksLayoutManager);
         try {
             URL bookUrl = ApiUtil.buildUrl("cooking");
             new BookQueryTask().execute(bookUrl);
@@ -52,29 +59,20 @@ public class BookListActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {// called when doInBackground completes
-            TextView tvResult = findViewById(R.id.tvResponse);
             TextView tvError = findViewById(R.id.tv_error);
             mLoadingProgress.setVisibility(View.INVISIBLE);
             if(result == null){
-                tvResult.setVisibility(View.INVISIBLE);
+                rvBooks.setVisibility(View.INVISIBLE);
                 tvError.setVisibility(View.VISIBLE);
             }else{
-                tvResult.setVisibility(View.VISIBLE);
+                rvBooks.setVisibility(View.VISIBLE);
                 tvError.setVisibility(View.INVISIBLE);
             }
             ArrayList<Book> books = ApiUtil.getBooksFromJson(result);
             StringBuilder resultString = new StringBuilder();
-            for(Book book: books){
-                resultString.append(resultString)
-                        .append(book.title)
-                        .append("\n")
-//                        .append((book.authors))
-//                        .append("\n")
-                        .append(book.publishedDate)
-                        .append("\n\n");
-            }
-            Log.d("book size", "onPostExecute: " + books.size());
-            tvResult.setText(resultString);
+
+            BooksAdapter adapter = new BooksAdapter(books);
+            rvBooks.setAdapter(adapter);
         }
 
     }
