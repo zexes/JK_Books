@@ -52,10 +52,10 @@ public class ApiUtil {
                 Book book = new Book(
                         bookJSON.getString(ID),
                         volumeInfoJSON.getString(TITLE),
-                        (volumeInfoJSON.isNull(SUBTITLE) ? " " : volumeInfoJSON.getString(SUBTITLE)),
+                        (volumeInfoJSON.isNull(SUBTITLE) ? "" : volumeInfoJSON.getString(SUBTITLE)),
                         authors,
                         volumeInfoJSON.getString(PUBLISHER),
-                        volumeInfoJSON.getString(PUBLISHED_DATE)
+                        volumeInfoJSON.isNull(PUBLISHED_DATE)? "" : volumeInfoJSON.getString(PUBLISHED_DATE)
                 );
                 books.add(book);
             }
