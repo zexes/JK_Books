@@ -12,7 +12,7 @@
         android:layout_height="match_parent">
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".BookDetail">
 
     <TextView
@@ -22,6 +22,7 @@
         android:layout_marginLeft="@dimen/standard_margin"
         android:layout_marginTop="@dimen/standard_margin"
         android:text="@{Book.title}"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -36,6 +37,7 @@
         android:layout_marginLeft="@dimen/standard_margin"
         android:layout_marginTop="@dimen/standard_margin"
         android:text="@{Book.subTitle}"
+        android:textColor="@color/colorPrimary"
         android:textSize="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -44,17 +46,15 @@
         app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
 
     <ImageView
-        android:id="@+id/imageView2"
+        android:id="@+id/imgCover"
         android:layout_width="143dp"
         android:layout_height="155dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="@dimen/standard_margin"
-        android:layout_marginRight="@dimen/standard_margin"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+        android:imageUrl="@{Book.thumbnail}"
+        android:layout_marginTop="@dimen/standard_margin"
         app:layout_constraintTop_toBottomOf="@+id/tvSubtitle"
-        app:srcCompat="@drawable/book_open" />
+        android:layout_marginLeft="@dimen/standard_margin"
+        app:layout_constraintLeft_toLeftOf="parent"
+         />
 
     <TextView
         android:id="@+id/tvAuthors"
@@ -64,8 +64,9 @@
         android:layout_marginLeft="24dp"
         android:layout_marginTop="16dp"
         android:text="@{Book.authors}"
+        android:textColor="@color/colorAccent"
         android:textSize="18sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/imgCover"
         app:layout_constraintTop_toBottomOf="@+id/tvSubtitle" />
 
     <TextView
@@ -77,7 +78,7 @@
         android:layout_marginTop="20dp"
         android:text="@{Book.publisher}"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/imgCover"
         app:layout_constraintTop_toBottomOf="@+id/tvAuthors" />
 
     <TextView
@@ -89,7 +90,7 @@
         android:layout_marginTop="20dp"
         android:text="@{Book.publishedDate}"
         android:textSize="16sp"
-        app:layout_constraintStart_toEndOf="@+id/imageView2"
+        app:layout_constraintStart_toEndOf="@+id/imgCover"
         app:layout_constraintTop_toBottomOf="@+id/tvPublisher" />
 
     <TextView
@@ -103,7 +104,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+        app:layout_constraintTop_toBottomOf="@+id/imgCover" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
