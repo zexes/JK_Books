@@ -1,10 +1,11 @@
 package com.zikozee.books;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.MenuItemCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,6 +19,8 @@ import android.widget.TextView;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class BookListActivity extends AppCompatActivity implements SearchView.OnQueryTextListener{
     private ProgressBar mLoadingProgress;
@@ -27,18 +30,26 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
+        rvBooks = findViewById(R.id.rv_books);
         mLoadingProgress = findViewById(R.id.pb_loading);
-        rvBooks = (RecyclerView) findViewById(R.id.rv_books);
-        LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false);
-        rvBooks.setLayoutManager(booksLayoutManager);
+        Intent intent = getIntent();
+        String query = intent.getStringExtra("Query");
+        URL bookUrl;
         try {
-            URL bookUrl = ApiUtil.buildUrl("cooking");
-            new BookQueryTask().execute(bookUrl);
+            if(query == null || query.isEmpty()){
+
+             bookUrl = ApiUtil.buildUrl("cooking");
+            }else{
+                bookUrl = new URL(query);
+            }
+            new BooksQueryTask().execute(bookUrl);
 
         } catch (Exception e) {
             Log.d("error", e.getMessage());
         }
+        LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
+        rvBooks.setLayoutManager(booksLayoutManager);
     }
 
     @Override
@@ -47,14 +58,53 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
         searchView.setOnQueryTextListener(this);
+
+        List<String> recentList = SpUtil.getQueryList(getApplicationContext());
+        int itemNum = recentList.size();
+        for (int i = 0; i < itemNum; i++) {
+            menu.add(Menu.NONE, i, Menu.NONE, recentList.get(i));
+        }
+
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_advanced_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                int position = item.getItemId() + 1;
+                String preferenceName = SpUtil.QUERY + position;
+                String query = SpUtil.getPreferenceString(getApplicationContext(), preferenceName);
+                String[] prefParams = query.split("\\,");
+                Log.d("here", "onOptionsItemSelected: " + Arrays.toString(prefParams));
+                String[] queryParams = new String[4];
+                System.arraycopy(prefParams, 0, queryParams, 0, prefParams.length);
+
+                URL bookURL = ApiUtil.buildUrl(
+                        (queryParams[0]== null) ? "" : queryParams[0].trim(),
+                        (queryParams[1]== null) ? "" : queryParams[1].trim(),
+                        (queryParams[2]== null) ? "" : queryParams[2].trim(),
+                        (queryParams[3]== null) ? "" : queryParams[3].trim()
+                );
+
+                Log.d("URL", "onOptionsItemSelected: " + bookURL.toString());
+
+                new BooksQueryTask().execute(bookURL);
+
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     @Override
     public boolean onQueryTextSubmit(String query) {
         try{
             URL bookUrl = ApiUtil.buildUrl(query);
-            new BookQueryTask().execute(bookUrl);
+            new BooksQueryTask().execute(bookUrl);
         }catch (Exception e){
             Log.d("error", e.getMessage());
         }
@@ -66,7 +116,7 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         return false;
     }
 
-    public class BookQueryTask extends AsyncTask<URL, Void, String>{
+    public class BooksQueryTask extends AsyncTask<URL, Void, String>{
 
         @Override
         protected void onPreExecute() {//at initiation
@@ -98,7 +148,6 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
                 tvError.setVisibility(View.INVISIBLE);
             }
             ArrayList<Book> books = ApiUtil.getBooksFromJson(result);
-            StringBuilder resultString = new StringBuilder();
 
             BooksAdapter adapter = new BooksAdapter(books);
             rvBooks.setAdapter(adapter);
