@@ -2,6 +2,7 @@ package com.zikozee.books;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,15 +58,7 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookViewHolder>{
 
         public void bind (Book book){
             tvTitle.setText(book.title);
-            StringBuilder authorBuilder = new StringBuilder();
-            int i = 0;
-            for(String author: book.authors){
-                i++;
-                authorBuilder.append(author)
-                        .append(i < book.authors.length ? "," : "");
-
-            }
-            tvAuthors.setText(authorBuilder.toString());
+            tvAuthors.setText(book.authors);
             tvDate.setText(book.publishedDate);
             tvPublisher.setText(book.publisher);
         }

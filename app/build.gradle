@@ -3,6 +3,9 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 29
 
+    dataBinding {
+        enabled = true
+    }
     defaultConfig {
         applicationId "com.zikozee.books"
         minSdkVersion 16
