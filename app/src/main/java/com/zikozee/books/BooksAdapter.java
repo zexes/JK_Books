@@ -1,6 +1,7 @@
 package com.zikozee.books;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,7 +39,7 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookViewHolder>{
         return books.size();
     }
 
-    public class BookViewHolder extends RecyclerView.ViewHolder{
+    public class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView tvTitle;
         TextView tvAuthors;
@@ -51,6 +52,7 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookViewHolder>{
             tvAuthors = itemView.findViewById(R.id.tvAuthors);
             tvDate = itemView.findViewById(R.id.tvPublishedDate);
             tvPublisher = itemView.findViewById(R.id.tvPublisher);
+            itemView.setOnClickListener(this);
         }
 
         public void bind (Book book){
@@ -66,6 +68,15 @@ class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookViewHolder>{
             tvAuthors.setText(authorBuilder.toString());
             tvDate.setText(book.publishedDate);
             tvPublisher.setText(book.publisher);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            Book selectedBook = books.get(position);
+            Intent intent = new Intent(v.getContext(), BookDetail.class);
+            intent.putExtra("Book", selectedBook);
+            itemView.getContext().startActivity(intent);
         }
     }
 }
